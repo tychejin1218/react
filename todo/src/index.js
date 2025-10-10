@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // React Query import
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // QueryClient를 생성
 const queryClient = new QueryClient();
@@ -15,7 +16,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // 웹 성능 로깅 (선택사항)
