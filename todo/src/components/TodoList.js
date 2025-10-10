@@ -1,40 +1,91 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getTodos } from '../services/api';
-import '../styles/TodoList.css';
 
 const TodoList = () => {
-    const [todos, setTodos] = useState([]); // 할 일 목록 상태
-    const [loading, setLoading] = useState(true); // 로딩 상태
-    const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태
+    const [todos, setTodos] = useState([]);
+    const [loading, setLoading] = useState(false); // 로딩 상태
+    const [error, setError] = useState(''); // 에러 상태
 
-    // Todo 목록 데이터를 불러오는 함수
-    const loadTodos = async () => {
+    // 검색 조건을 위한 필터 상태
+    const [filters, setFilters] = useState({
+        title: '',         // 기본 검색 조건 (title)
+        description: '',   // 기본 검색 조건 (description)
+        completed: '',     // 기본 검색 조건 (completed)
+    });
+
+    // 필터 변경 핸들러
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        // 필터 상태를 업데이트
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value, // 변경된 필드 업데이트
+        }));
+    };
+
+    // 검색 버튼 클릭 시 호출
+    const handleSearch = async () => {
         try {
-            const data = await getTodos(); // API 호출
-            setTodos(data); // 데이터 상태 업데이트
-            setErrorMessage(''); // 에러 메시지 초기화
+            setLoading(true); // 로딩 시작
+            setError(''); // 기존 에러 초기화
+            const data = await getTodos(filters); // API 호출 + 필터 전달
+            setTodos(data); // 검색 결과 업데이트
         } catch (error) {
-            setErrorMessage(error.message); // 에러 발생 시 메시지 저장
+            setError(error.message || 'Error occurred while fetching todos'); // 에러 처리
         } finally {
-            setLoading(false); // 로딩 종료
+            setLoading(false); // 로딩 끝
         }
     };
 
-    // 컴포넌트가 마운트되었을 때 API 호출
-    useEffect(() => {
-        loadTodos();
-    }, []);
-
     return (
         <div>
-            <h1>Todo List</h1>
+            <h1>할 일 목록</h1>
 
-            {/* 에러 메시지 표시 */}
-            {errorMessage && (
-                <p style={{ color: 'red', fontWeight: 'bold' }}>{errorMessage}</p>
-            )}
+            {/* 필터 입력 폼 */}
+            <div className="filters">
+                <label>
+                    Title:
+                    <input
+                        type="text"
+                        name="title"
+                        value={filters.title}
+                        placeholder="Search by Title"
+                        onChange={handleFilterChange}
+                    />
+                </label>
+                <label>
+                    Description:
+                    <input
+                        type="text"
+                        name="description"
+                        value={filters.description}
+                        placeholder="Search by Description"
+                        onChange={handleFilterChange}
+                    />
+                </label>
+                <label>
+                    Completed:
+                    <select
+                        name="completed"
+                        value={filters.completed}
+                        onChange={handleFilterChange}
+                    >
+                        <option value="">All</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </label>
 
-            {/* 로딩 표시 */}
+                {/* 검색 버튼 */}
+                <button onClick={handleSearch} disabled={loading}>
+                    {loading ? 'Searching...' : 'Search'}
+                </button>
+            </div>
+
+            {/* 에러 메시지 */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            {/* 로딩 상태 및 검색 결과 표시 */}
             {loading ? (
                 <p>Loading...</p>
             ) : todos.length > 0 ? (
@@ -48,7 +99,7 @@ const TodoList = () => {
                     ))}
                 </ul>
             ) : (
-                <p>No todos available</p>
+                <p>No todos found.</p>
             )}
         </div>
     );
