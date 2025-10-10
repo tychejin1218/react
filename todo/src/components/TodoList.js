@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getTodos } from '../services/api';
 import { Container, Row, Col, Form, Button, Card, Badge, Alert, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -106,21 +107,29 @@ const TodoFilterForm = ({ filters, onFilterChange, onSearch, loading }) => (
 );
 
 // 카드 컴포넌트
-const TodoCard = ({ todo }) => (
-  <Col md={6} className="mb-3">
-    <Card className="shadow-sm">
-      <Card.Body className="d-flex justify-content-between align-items-center">
-        <div>
-          <Card.Title>{todo.title}</Card.Title>
-          <Card.Text>{todo.description}</Card.Text>
-        </div>
-        <Badge bg={todo.completed ? 'success' : 'secondary'}>
-          {todo.completed ? '완료' : '미완료'}
-        </Badge>
-      </Card.Body>
-    </Card>
-  </Col>
-);
+const TodoCard = ({ todo }) => {
+  const navigate = useNavigate();
+
+  return (
+    <Col md={6} className="mb-3">
+      <Card
+        className="shadow-sm"
+        onClick={() => navigate(`/todo/${todo.id}`)}
+        style={{ cursor: 'pointer' }}
+      >
+        <Card.Body className="d-flex justify-content-between align-items-center">
+          <div>
+            <Card.Title>{todo.title}</Card.Title>
+            <Card.Text>{todo.description}</Card.Text>
+          </div>
+          <Badge bg={todo.completed ? 'success' : 'secondary'}>
+            {todo.completed ? '완료' : '미완료'}
+          </Badge>
+        </Card.Body>
+      </Card>
+    </Col>
+  );
+};
 
 // 리스트 렌더링
 const renderTodoList = (todos, loading) => {

@@ -4,6 +4,7 @@ import { Navbar, Container, Nav } from 'react-bootstrap';
 
 import Main from './components/Main';
 import TodoList from './components/TodoList';
+import TodoDetail from './components/TodoDetail';
 
 const App = () => (
   <Router>
@@ -15,6 +16,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/todo" element={<TodoList />} />
+        <Route path="/todo/:id" element={<TodoDetail />} />
       </Routes>
     </Container>
   </Router>
