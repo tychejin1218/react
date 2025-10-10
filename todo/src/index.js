@@ -10,12 +10,12 @@ const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        {/* QueryClientProvider로 전체 App을 감쌉니다. */}
-        <QueryClientProvider client={queryClient}>
-            <App />
-        </QueryClientProvider>
-    </React.StrictMode>
+  <React.StrictMode>
+    {/* QueryClientProvider로 전체 App을 감쌉니다. */}
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </React.StrictMode>,
 );
 
 // 웹 성능 로깅 (선택사항)
